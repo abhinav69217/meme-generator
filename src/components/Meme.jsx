@@ -1,5 +1,4 @@
-import { useState } from "react";
-import memesData from "../assets/memesData";
+import { useState, useEffect } from "react";
 
 const Meme = () => {
   const [meme, setMeme] = useState({
@@ -8,16 +7,23 @@ const Meme = () => {
     randomImage: "http://i.imgflip.com/1bij.jpg",
   });
 
-  const [allMemeImages, setAllMemeImages] = useState(memesData);
+  const [allMeme, setAllMeme] = useState([]);
 
-  function getMemeImage() {
-    const memesArray = allMemeImages.data.memes;
-    const randomNumber = Math.floor(Math.random() * memesArray.length);
-    const url = memesArray[randomNumber].url;
+  useEffect(() => {
+    getMemeImage();
+  }, []);
+
+  async function getMemeImage() {
+    const response = await fetch("https://api.imgflip.com/get_memes");
+    const json = await response.json();
+    const memes = json?.data?.memes;
+    const randomNumber = Math.floor(Math.random() * memes.length);
+    const url = memes[randomNumber].url;
     setMeme((prevMeme) => ({
       ...prevMeme,
       randomImage: url,
     }));
+    setAllMeme(memes);
   }
 
   const handleChange = (event) => {
@@ -35,7 +41,7 @@ const Meme = () => {
           type="text"
           placeholder="Top Text"
           className="formInput"
-          value={FormData.topText}
+          value={meme.topText}
           name="topText"
           onChange={handleChange}
         />
@@ -43,7 +49,7 @@ const Meme = () => {
           type="text"
           placeholder="Bottom Text"
           className="formInput"
-          value={FormData.bottomText}
+          value={meme.bottomText}
           name="bottomText"
           onChange={handleChange}
         />
@@ -52,7 +58,7 @@ const Meme = () => {
         </button>
       </div>
       <div className="meme">
-        <img src={meme.randomImage} className="meme--image" />
+        <img src={meme.randomImage} alt="Meme" className="meme--image" />
         <h2 className="meme--text top">{meme.topText}</h2>
         <h2 className="meme--text bottom">{meme.bottomText}</h2>
       </div>
