@@ -9,8 +9,6 @@ const Navbar = () => {
         />
         <h2>Meme Generator</h2>
       </a>
-
-      <h3>React Course- Project 3</h3>
     </nav>
   );
 };
